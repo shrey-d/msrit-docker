@@ -1,0 +1,92 @@
+appdb:
+  container_name: appdb
+  volumes:
+    - /var/myapp/appdb:/var/lib/mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=mysql_password
+    - MYSQL_DATABASE=cyclos3
+    - MYSQL_USER=cyclos
+    - MYSQL_PASSWORD=cyclos1234
+  image: mysql:5.5
+cyclosapp01:
+  container_name: cyclosapp01
+  volumes:
+    - /var/myapp/cyclosapp/cyclos:/usr/local/tomcat/webapps/cyclos
+  environment:
+    - CATALINA_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=4000 -Dcom.sun.management.jmxremote.rmi.port=6000 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=$$(/sbin/ip -o -4 addr list eth0 | awk '{print $$4}' | cut -d/ -f1)
+  links:
+    - appdb:appdb
+  image: tomcat:7-jre7
+cyclosapp02:
+  container_name: cyclosapp02
+  volumes:
+    - /var/myapp/cyclosapp/cyclos:/usr/local/tomcat/webapps/cyclos
+  environment:
+    - CATALINA_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=4000 -Dcom.sun.management.jmxremote.rmi.port=6000 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=$$(/sbin/ip -o -4 addr list eth0 | awk '{print $$4}' | cut -d/ -f1)
+  links:
+    - appdb:appdb
+  image: tomcat:7-jre7
+cyclosapp03:
+  container_name: cyclosapp03
+  volumes:
+    - /var/myapp/cyclosapp/cyclos:/usr/local/tomcat/webapps/cyclos
+  environment:
+    - CATALINA_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=4000 -Dcom.sun.management.jmxremote.rmi.port=6000 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=$$(/sbin/ip -o -4 addr list eth0 | awk '{print $$4}' | cut -d/ -f1)
+  links:
+    - appdb:appdb
+  image: tomcat:7-jre7
+cyclosapp04:
+  container_name: cyclosapp04
+  volumes:
+    - /var/myapp/cyclosapp/cyclos:/usr/local/tomcat/webapps/cyclos
+  environment:
+    - CATALINA_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=4000 -Dcom.sun.management.jmxremote.rmi.port=6000 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=$$(/sbin/ip -o -4 addr list eth0 | awk '{print $$4}' | cut -d/ -f1)
+  links:
+    - appdb:appdb
+  image: tomcat:7-jre7
+cyclosapp05:
+  container_name: cyclosapp05
+  volumes:
+    - /var/myapp/cyclosapp/cyclos:/usr/local/tomcat/webapps/cyclos
+  environment:
+    - CATALINA_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=4000 -Dcom.sun.management.jmxremote.rmi.port=6000 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=$$(/sbin/ip -o -4 addr list eth0 | awk '{print $$4}' | cut -d/ -f1)
+  links:
+    - appdb:appdb
+  image: tomcat:7-jre7
+cyclosapp06:
+  container_name: cyclosapp06
+  volumes:
+    - /var/myapp/cyclosapp/cyclos:/usr/local/tomcat/webapps/cyclos
+  environment:
+    - CATALINA_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=4000 -Dcom.sun.management.jmxremote.rmi.port=6000 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=$$(/sbin/ip -o -4 addr list eth0 | awk '{print $$4}' | cut -d/ -f1)
+  links:
+    - appdb:appdb
+  image: tomcat:7-jre7
+applb01:
+  container_name: applb01
+  volumes:
+    - /var/myapp/applb01/modified_httpd.conf:/usr/local/apache2/conf/httpd.conf
+  links:
+    - cyclosapp01:cyclosapp01
+    - cyclosapp02:cyclosapp02
+    - cyclosapp03:cyclosapp03
+  image: docker.io/httpd:2.4.20
+applb02:
+  container_name: applb02
+  volumes:
+    - /var/myapp/applb02/modified_httpd.conf:/usr/local/apache2/conf/httpd.conf
+  links:
+    - cyclosapp04:cyclosapp04
+    - cyclosapp05:cyclosapp05
+    - cyclosapp06:cyclosapp06
+  image: docker.io/httpd:2.4.20
+apprp01:
+  container_name: apprp01
+  ports:
+    - "8080:9090"
+  volumes:
+    - /var/myapp/apprp01/modified_httpd.conf:/usr/local/apache2/conf/httpd.conf
+  links:
+    - applb01:applb01
+    - applb02:applb02
+  image: docker.io/httpd:2.4.20
